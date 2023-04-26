@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Course_project_OOP_137knz
@@ -29,13 +31,14 @@ namespace Course_project_OOP_137knz
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.Unicode;
             state = ProgramState.RUNNING;
 
             while(state == ProgramState.RUNNING)
             {
                 Console.Write(">");
                 Console.Out.Flush();
-                parseCommand(Encoding.UTF8.GetString(Encoding.Default.GetBytes(Console.ReadLine())));
+                parseCommand(Console.ReadLine());
             }
         }
 
@@ -43,6 +46,7 @@ namespace Course_project_OOP_137knz
         {
             if(cmd != null)
             {
+                Console.WriteLine(cmd);
                 List<String> splitCmd = cmd.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).ToList<String>();
                 if (cmd.Contains(QuickCommandType.INFO) && (splitCmd.Count == 2))
                 {
@@ -62,6 +66,9 @@ namespace Course_project_OOP_137knz
                 }
                 else if (cmd.Contains(QuickCommandType.EXIT))
                 {
+                    restaurant.infoSales();
+                    Console.WriteLine("Затваряне след 10 секунди...");
+                    Thread.Sleep(10000);
                     state = ProgramState.STOPPED;
                     return;
                 }
@@ -72,12 +79,15 @@ namespace Course_project_OOP_137knz
                         if (splitCmd.Count == 4)
                         {
                             String category = splitCmd[0];
-                            Console.WriteLine(category);
                             String name = splitCmd[1];
-                            int quantity = Int32.Parse(splitCmd[2]);
-                            decimal price = Decimal.Parse(splitCmd[3]);
-
-                            restaurant.AddProductToMenu(category, name, quantity, price);
+                            int quantity = 0;
+                            decimal price = decimal.Parse(splitCmd[3].Trim(), CultureInfo.InvariantCulture);
+                            Console.WriteLine(price);
+                            if (Int32.TryParse(splitCmd[2], out quantity))
+                            {
+                                Console.WriteLine(price);
+                                restaurant.AddProductToMenu(category, name, quantity, price);
+                            }
                         }
                         else
                         {
