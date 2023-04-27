@@ -46,11 +46,10 @@ namespace Course_project_OOP_137knz
         {
             if(cmd != null)
             {
-                Console.WriteLine(cmd);
                 List<String> splitCmd = cmd.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries).ToList<String>();
-                if (cmd.Contains(QuickCommandType.INFO) && (splitCmd.Count == 2))
+                if (cmd.Contains(QuickCommandType.INFO) && (splitCmd.Count == 1))
                 {
-                    String product_name = splitCmd[1];
+                    String product_name = splitCmd[0].Remove(0, 5);
                     if (restaurant.IsProductAvailable(product_name))
                     {
                         restaurant.GetProductByName(product_name).ProductInfo();
@@ -67,6 +66,7 @@ namespace Course_project_OOP_137knz
                 else if (cmd.Contains(QuickCommandType.EXIT))
                 {
                     restaurant.infoSales();
+                    Console.WriteLine();
                     Console.WriteLine("Затваряне след 10 секунди...");
                     Thread.Sleep(10000);
                     state = ProgramState.STOPPED;
@@ -74,7 +74,7 @@ namespace Course_project_OOP_137knz
                 }
                 else
                 {
-                    if (restaurant.getMenuInstance().Count <= 0)
+                    if (!Int32.TryParse(splitCmd[0], out _))
                     {
                         if (splitCmd.Count == 4)
                         {
@@ -82,10 +82,8 @@ namespace Course_project_OOP_137knz
                             String name = splitCmd[1];
                             int quantity = 0;
                             decimal price = decimal.Parse(splitCmd[3].Trim(), CultureInfo.InvariantCulture);
-                            Console.WriteLine(price);
                             if (Int32.TryParse(splitCmd[2], out quantity))
                             {
-                                Console.WriteLine(price);
                                 restaurant.AddProductToMenu(category, name, quantity, price);
                             }
                         }

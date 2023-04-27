@@ -14,7 +14,7 @@ namespace Course_project_OOP_137knz
     {
         private static readonly Restaurant m_instance = new Restaurant();
         private static List<Table> m_tables;
-        private static Dictionary<String, Product> m_productMenu;
+        private static Dictionary<String, List<Product>> m_productMenu;
 
         private static decimal m_totalPrice = 0;
         private static int m_totalProductsSalesCount = 0;
@@ -24,7 +24,12 @@ namespace Course_project_OOP_137knz
         private Restaurant()
         {
             m_tables = new List<Table>();
-            m_productMenu = new Dictionary<String, Product>();
+            m_productMenu = new Dictionary<String, List<Product>>();
+            m_productMenu.Add(ProductCategory.SALAD, new List<Product>());
+            m_productMenu.Add(ProductCategory.SOUP, new List<Product>());
+            m_productMenu.Add(ProductCategory.MAIN_DISH, new List<Product>());
+            m_productMenu.Add(ProductCategory.DESERT, new List<Product>());
+            m_productMenu.Add(ProductCategory.DRINK, new List<Product>());
             m_totalProductSalesCountPerCategory = new Dictionary<String, int>();
             m_totalProductSalesPerCategory = new Dictionary<String, decimal>();
             /* Initialize the tables */
@@ -53,7 +58,7 @@ namespace Course_project_OOP_137knz
             }
         }
 
-        public Dictionary<String, Product> getMenuInstance()
+        public Dictionary<String, List<Product>> getMenuInstance()
         {
             return m_productMenu;
         }
@@ -62,29 +67,55 @@ namespace Course_project_OOP_137knz
         {
             Console.OutputEncoding = Encoding.UTF8;
             if (!IsProductAvailable(name))
-            {
+            {   
+                if (category.Contains(ProductCategory.SALAD))
+                {
+                    m_productMenu[ProductCategory.SALAD].Add(new Salad(name, price, quantity));
+                }
+                else if(category.Contains(ProductCategory.SOUP))
+                {
+                    m_productMenu[ProductCategory.SOUP].Add(new Soup(name, price, quantity));
+                }
+                else if (category.Contains(ProductCategory.MAIN_DISH))
+                {
+                    m_productMenu[ProductCategory.MAIN_DISH].Add(new MainDish(name, price, quantity));
+                }
+                else if (category.Contains(ProductCategory.DESERT))
+                {
+                    m_productMenu[ProductCategory.DESERT].Add(new Desert(name, price, quantity));
+                }
+                else if (category.Contains(ProductCategory.DRINK))
+                {
+                    m_productMenu[ProductCategory.DRINK].Add(new Drink(name, price, quantity));
+                }
+                else
+                {
+                    Console.WriteLine(String.Format("Продуктът {0} не може да бъде добавен в менюто, " +
+                                                    "поради неправилна категория {1}", name, category));
+                }
+                /*
                 switch (category)
                 {
                     case ProductCategory.SALAD:
-                        m_productMenu.Add(ProductCategory.SALAD, new Salad(name, price, quantity));
+                        m_productMenu[ProductCategory.SALAD].Add(new Salad(name, price, quantity));
                         break;
                     case ProductCategory.SOUP:
-                        m_productMenu.Add(ProductCategory.SOUP, new Soup(name, price, quantity));
+                        m_productMenu[ProductCategory.SOUP].Add(new Soup(name, price, quantity));
                         break;
                     case ProductCategory.MAIN_DISH:
-                        m_productMenu.Add(ProductCategory.MAIN_DISH, new MainDish(name, price, quantity));
+                        m_productMenu[ProductCategory.MAIN_DISH].Add(new MainDish(name, price, quantity));
                         break;
                     case ProductCategory.DESERT:
-                        m_productMenu.Add(ProductCategory.DESERT, new Desert(name, price, quantity));
+                        m_productMenu[ProductCategory.DESERT].Add(new Desert(name, price, quantity));
                         break;
                     case ProductCategory.DRINK:
-                        m_productMenu.Add(ProductCategory.DRINK, new Drink(name, price, quantity));
+                        m_productMenu[ProductCategory.DRINK].Add(new Drink(name, price, quantity));
                         break;
                     default:
                         Console.WriteLine(String.Format("Продуктът {0} не може да бъде добавен в менюто, " +
                                                         "поради неправилна категория {1}", name, category));
                         break;
-                }
+                } */
             } else
             {
                 Console.WriteLine(String.Format("Продуктът {0} е вече наличен в менюто", name));
@@ -155,7 +186,7 @@ namespace Course_project_OOP_137knz
                                                                     m_totalProductSalesPerCategory[ProductCategory.SALAD]));
             Console.WriteLine(String.Format(" - Супа: {0} - {1}", m_totalProductSalesCountPerCategory[ProductCategory.SOUP],
                                                                     m_totalProductSalesPerCategory[ProductCategory.SOUP]));
-            Console.WriteLine(String.Format(" - Основно: {0} - {1}", m_totalProductSalesCountPerCategory[ProductCategory.MAIN_DISH],
+            Console.WriteLine(String.Format(" - Основно ястие: {0} - {1}", m_totalProductSalesCountPerCategory[ProductCategory.MAIN_DISH],
                                                                     m_totalProductSalesPerCategory[ProductCategory.MAIN_DISH]));
             Console.WriteLine(String.Format(" - Десерт: {0} - {1}", m_totalProductSalesCountPerCategory[ProductCategory.DESERT],
                                                                     m_totalProductSalesPerCategory[ProductCategory.DESERT]));
@@ -167,9 +198,12 @@ namespace Course_project_OOP_137knz
         {
             foreach(var item in m_productMenu)
             {
-                if(item.Value.getName().Equals(name))
+                foreach(var product in item.Value)
                 {
-                    return true;
+                    if(product.getName().Equals(name))
+                    {
+                        return true;
+                    }
                 }
             }
 
@@ -180,9 +214,12 @@ namespace Course_project_OOP_137knz
         {
             foreach (var item in m_productMenu)
             {
-                if (item.Value.getName().Equals(name))
+                foreach (var product in item.Value)
                 {
-                    return item.Value;
+                    if (product.getName().Equals(name))
+                    {
+                        return product;
+                    }
                 }
             }
 
